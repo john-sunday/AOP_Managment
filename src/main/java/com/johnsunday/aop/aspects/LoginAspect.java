@@ -2,6 +2,7 @@ package com.johnsunday.aop.aspects;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import com.johnsunday.aop.main.Customer;
@@ -54,14 +55,40 @@ public class LoginAspect {
 	// y cualquier número de parámetros más de cualquier tipo.
 	// .. -> comodín
 	
-	@Before("execution(public * insert*(..))")
+	// Reusable pointcut expression.
+	@Pointcut("execution(public * insert*(..))")
+	// Nombre identificativo del pointcut expression.
+	private void forCustomers() {}
+	
+	//@Before("execution(public * insert*(..))")
 	// Ejecuta métodos insert con cualquier número de parámetros 
 	// de cualquier tipo.
 	// .. -> comodín
+	
+	@Before("forCustomers()")
 	public void beforeInsertingCustomer() {
 		/*	Estas son las taréas que se comprobarían antes de
 		 * 	insertar el cliente.	*/
 		System.out.println("The user is LOGGED IN");
 		System.out.println("The profile to insert customers is CORRECT");
+	}
+	// Modularización para que el método 'beforeInsertingCustomer()'
+	// no tenga 500!! líneas.
+	
+	//@Before("execution(public * insert*(..))")-> funciona pero si tienes 50 métodos, 
+	// tienes que copiar y pegar 50 veces una expresión más compleja que con la reutilización.
+	// @Before("execution(public * insert*(..))") -> más largo que -> @Before("forCustomers()")
+	// Y sólo cambias el pointcut para cambiar las condiciones de la ejecución del pointcut.
+	@Before("forCustomers()")
+	public void customerRequirements() {
+		System.out.println("The customer meets the requirements to be added in DB");
+	}
+	
+	// Si la tabla tiene más de 3.000 registros no se puede realizar la inserción.
+	//@Before("execution(public * insert*(..))")
+	
+	@Before("forCustomers()")
+	public void tableRequirements() {
+		System.out.println("There are less than 3.000 records in DB. You can add the new customer.");
 	}
 }
