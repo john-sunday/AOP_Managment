@@ -56,16 +56,37 @@ public class LoginAspect {
 	// .. -> comodín
 	
 	// Reusable pointcut expression.
-	@Pointcut("execution(public * insert*(..))")
+	//@Pointcut("execution(public * insert*(..))")
+
+	@Pointcut("execution(* com.johnsunday.aop.dao.*.*(..))")
+	// Poincut que actúa en el paquete indicado -> (*(espacio)com.johnsunday.aop.dao...)
+	// sobre cualquier método -> .*.*
+	// con/sin parámetros -> (..)
 	// Nombre identificativo del pointcut expression.
 	private void forCustomers() {}
+	
+	// Pointcut sólo para Getters.
+	@Pointcut("execution(* com.johnsunday.aop.dao.*.get*(..))")
+	private void forGetters() {}
+
+	// Pointcut sólo para Setters.
+	@Pointcut("execution(* com.johnsunday.aop.dao.*.set*(..))")
+	private void forSetters() {}
+	
+	// Combinación de pointcuts.
+	// Para todos los métodos, MENOS Getters y Setters.
+	@Pointcut("forCustomers() && !(forGetters() || forSetters())")
+	private void packageLessGettersSetters() {}
 	
 	//@Before("execution(public * insert*(..))")
 	// Ejecuta métodos insert con cualquier número de parámetros 
 	// de cualquier tipo.
 	// .. -> comodín
 	
-	@Before("forCustomers()")
+	//@Before("forCustomers()")
+	//@Before("forGetters()")// Ejecutamos método sólo antes de Getters->forGetters(){}
+	//@Before("forSetters()")// Ejecutamos método sólo antes de Setters->forSetters(){}
+	@Before("packageLessGettersSetters()")
 	public void beforeInsertingCustomer() {
 		/*	Estas son las taréas que se comprobarían antes de
 		 * 	insertar el cliente.	*/
@@ -79,7 +100,7 @@ public class LoginAspect {
 	// tienes que copiar y pegar 50 veces una expresión más compleja que con la reutilización.
 	// @Before("execution(public * insert*(..))") -> más largo que -> @Before("forCustomers()")
 	// Y sólo cambias el pointcut para cambiar las condiciones de la ejecución del pointcut.
-	@Before("forCustomers()")
+	//@Before("forCustomers()")
 	public void customerRequirements() {
 		System.out.println("The customer meets the requirements to be added in DB");
 	}
@@ -87,7 +108,7 @@ public class LoginAspect {
 	// Si la tabla tiene más de 3.000 registros no se puede realizar la inserción.
 	//@Before("execution(public * insert*(..))")
 	
-	@Before("forCustomers()")
+	//@Before("forCustomers()")
 	public void tableRequirements() {
 		System.out.println("There are less than 3.000 records in DB. You can add the new customer.");
 	}

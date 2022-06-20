@@ -16,6 +16,12 @@ public class Principal {
 		// Llamar al método.
 		customer.insertCustomer(new Customer("juanon","normal"),"NORMAL");
 		vipCustomer.insertVipCustomer();
+		
+		customer.setNormalCustomerCode("123456789");
+		customer.setNormalCustomerFeedback("Positive");
+		String customerCode = customer.getNormalCustomerCode();
+		String customerFeedback = customer.getNormalCustomerFeedback();
+		
 		// Cerrar el contexto
 		context.close();
 	}

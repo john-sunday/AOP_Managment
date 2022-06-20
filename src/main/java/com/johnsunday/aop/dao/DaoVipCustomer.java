@@ -6,6 +6,6 @@ import org.springframework.stereotype.Component;
 public class DaoVipCustomer {
 
 	public void insertVipCustomer() {
-		System.out.println("VIP customer inserted Successfully");
+		System.out.println("VIP customer inserted Successfully\n");
 	}
 }
